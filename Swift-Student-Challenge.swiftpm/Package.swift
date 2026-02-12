@@ -8,15 +8,15 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "RetuialsOfAHappySoul",
+    name: "Swift-Student-Challenge",
     platforms: [
         .iOS("16.0")
     ],
     products: [
         .iOSApplication(
-            name: "RetuialsOfAHappySoul",
+            name: "Swift-Student-Challenge",
             targets: ["AppModule"],
-            bundleIdentifier: "com.eunji.RetuialsOfAHappySoul.RetuialsOfAHappySoul",
+            bundleIdentifier: "com.eunji.Swift-Student-Challenge.Swift-Student-Challenge",
             teamIdentifier: "AT9KX3ZBW6",
             displayVersion: "1.0",
             bundleVersion: "1",
@@ -40,5 +40,5 @@ let package = Package(
             path: "."
         )
     ],
-    swiftLanguageVersions: [.v6]
+    swiftLanguageModes: [.v6]
 )
