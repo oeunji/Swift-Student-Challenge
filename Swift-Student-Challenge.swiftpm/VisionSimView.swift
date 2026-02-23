@@ -66,6 +66,11 @@ struct VisionSimView: View {
         .onAppear {
             updateSimulation()
         }
+        
+        NavigationLink("Draw As Them") {
+            ColorblindDrawView()
+        }
+        .padding()
     }
     
     private func renderOriginal(size: CGSize) -> UIImage {
