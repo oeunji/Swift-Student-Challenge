@@ -1,0 +1,21 @@
+//
+//  RootView.swift
+//  Swift-Student-Challenge
+//
+//  Created by 이은지 on 2/23/26.
+//
+
+import SwiftUI
+
+/// 앱 시작 시 Onboarding → (완료 후) 기존 ContentView로 이동
+struct RootView: View {
+    @State private var didFinishOnboarding = false
+
+    var body: some View {
+        if didFinishOnboarding {
+            ContentView()
+        } else {
+            OnboardingView(didFinish: $didFinishOnboarding)
+        }
+    }
+}
