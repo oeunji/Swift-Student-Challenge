@@ -13,7 +13,7 @@ struct RootView: View {
 
     var body: some View {
         if didFinishOnboarding {
-            ContentView()
+            CreateView()
         } else {
             OnboardingView(didFinish: $didFinishOnboarding)
         }

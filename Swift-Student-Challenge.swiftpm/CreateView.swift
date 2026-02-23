@@ -1,7 +1,7 @@
 import SwiftUI
 import PencilKit
 
-struct ContentView: View {
+struct CreateView: View {
     @State private var canvasView = PKCanvasView()
     // 현재 어떤 도구를 사용 중인지 추적하기 위한 상태
     @State private var activeTool: ToolType = .pen
@@ -53,6 +53,10 @@ struct ContentView: View {
                         }) {
                             Image(systemName: "lasso")
                                 .foregroundColor(activeTool == .lasso ? .blue : .primary)
+                        }
+                        
+                        NavigationLink("See Through Their Eyes") {
+                            VisionSimView(canvasView: $canvasView)
                         }
                         
                         Image(systemName: "hand.raised")
