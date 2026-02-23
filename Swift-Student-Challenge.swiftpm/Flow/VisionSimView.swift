@@ -14,6 +14,7 @@ struct VisionSimView: View {
     
     @State private var selectedMode: VisionMode = .protanopia
     @State private var simulatedImage: UIImage?
+    @State private var renderRect: CGRect = .zero
     
     private let simulationService = VisionSimulationService()
     
@@ -29,19 +30,22 @@ struct VisionSimView: View {
             .pickerStyle(.segmented)
             .padding()
             .onChange(of: selectedMode) { _ in
-                updateSimulation()
+                updateSimulation(rect: renderRect)
             }
             
             Divider()
             
             GeometryReader { geo in
-                HStack {
+                let availableWidth = geo.size.width - 32 - 16
+                let imageSide = max(0, availableWidth / 2)
+                HStack(spacing: 16) {
                     VStack {
                         Text("Normal")
                             .font(.caption)
-                        Image(uiImage: renderOriginal(size: geo.size))
+                        Image(uiImage: renderOriginal(rect: renderRect))
                             .resizable()
                             .scaledToFit()
+                            .frame(width: imageSide, height: imageSide)
                             .border(Color.gray.opacity(0.3))
                     }
                     
@@ -52,11 +56,12 @@ struct VisionSimView: View {
                             Image(uiImage: simulatedImage)
                                 .resizable()
                                 .scaledToFit()
+                                .frame(width: imageSide, height: imageSide)
                                 .border(Color.gray.opacity(0.3))
                         }
                     }
                 }
-                .padding()
+                .padding(.horizontal, 16)
             }
             
             Spacer()
@@ -64,7 +69,12 @@ struct VisionSimView: View {
         .navigationTitle("See Through Their Eyes")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
-            updateSimulation()
+            updateRenderRect()
+            updateSimulation(rect: renderRect)
+        }
+        .onChange(of: canvasView.drawing) { _ in
+            updateRenderRect()
+            updateSimulation(rect: renderRect)
         }
         
         NavigationLink("Draw As Them") {
@@ -73,13 +83,23 @@ struct VisionSimView: View {
         .padding()
     }
     
-    private func renderOriginal(size: CGSize) -> UIImage {
-        simulationService.render(drawing: canvasView.drawing, size: size)
+    private func renderOriginal(rect: CGRect) -> UIImage {
+        simulationService.render(drawing: canvasView.drawing, rect: rect)
     }
     
-    private func updateSimulation() {
-        let size = CGSize(width: 1024, height: 1024)
-        let original = simulationService.render(drawing: canvasView.drawing, size: size)
+    private func updateSimulation(rect: CGRect) {
+        let original = simulationService.render(drawing: canvasView.drawing, rect: rect)
         simulatedImage = simulationService.simulate(image: original, mode: selectedMode)
+    }
+
+    private func updateRenderRect() {
+        let bounds = canvasView.drawing.bounds
+        if bounds.isEmpty {
+            renderRect = CGRect(origin: .zero, size: CGSize(width: 1024, height: 1024))
+            return
+        }
+
+        let padding: CGFloat = 24
+        renderRect = bounds.insetBy(dx: -padding, dy: -padding)
     }
 }

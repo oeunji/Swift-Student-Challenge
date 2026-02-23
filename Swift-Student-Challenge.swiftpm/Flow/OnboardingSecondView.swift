@@ -13,7 +13,7 @@ struct OnboardingSecondView: View {
     private let lines: [String] = [
         "Were Those Real Red?",
         "They were all Red.",
-        "The color you see isn't absolute.",
+        "The color you see isn’t the color everyone sees.",
         "Start Experience"
     ]
 

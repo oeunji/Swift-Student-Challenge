@@ -5,16 +5,32 @@ struct CreateView: View {
     @State private var canvasView = PKCanvasView()
     // 현재 어떤 도구를 사용 중인지 추적하기 위한 상태
     @State private var activeTool: ToolType = .pen
+    @State private var activeColor: Color = .black
     
     enum ToolType {
         case pen, eraser, lasso
     }
+    
+    private let palette: [Color] = [.black, .red, .yellow, .green, .blue, .purple]
 
     var body: some View {
         NavigationStack {
             ZStack(alignment: .top) {
                 DrawingView(canvasView: $canvasView)
                     .ignoresSafeArea(edges: .bottom)
+            }
+            .safeAreaInset(edge: .bottom) {
+                NavigationLink {
+                    VisionSimView(canvasView: $canvasView)
+                } label: {
+                    Text("See Through Their Eyes")
+                        .font(.system(size: 18, weight: .semibold, design: .rounded))
+                        .frame(maxWidth: .infinity, minHeight: 52)
+                }
+                .buttonStyle(.borderedProminent)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(.thinMaterial)
             }
             .navigationTitle("Bio_DNA")
             .navigationBarTitleDisplayMode(.inline)
@@ -30,7 +46,7 @@ struct CreateView: View {
                         // 펜 버튼
                         Button(action: {
                             activeTool = .pen
-                            canvasView.tool = PKInkingTool(.pen, color: .black, width: 5)
+                            canvasView.tool = PKInkingTool(.pen, color: UIColor(activeColor), width: 5)
                         }) {
                             Image(systemName: "pencil.tip")
                                 .foregroundColor(activeTool == .pen ? .blue : .primary)
@@ -55,18 +71,27 @@ struct CreateView: View {
                                 .foregroundColor(activeTool == .lasso ? .blue : .primary)
                         }
                         
-                        NavigationLink("See Through Their Eyes") {
-                            VisionSimView(canvasView: $canvasView)
-                        }
-                        
                         Image(systemName: "hand.raised")
                         
                         Divider().frame(height: 20)
                         
-                        Circle().fill(.blue).frame(width: 20)
-                        Circle().fill(.brown).frame(width: 20)
-                        Circle().fill(.red).frame(width: 20)
-                        Image(systemName: "chevron.down.circle")
+                        ForEach(palette.indices, id: \.self) { index in
+                            let color = palette[index]
+                            Button {
+                                activeColor = color
+                                activeTool = .pen
+                                canvasView.tool = PKInkingTool(.pen, color: UIColor(color), width: 5)
+                            } label: {
+                                Circle()
+                                    .fill(color)
+                                    .frame(width: 20, height: 20)
+                                    .overlay(
+                                        Circle()
+                                            .stroke(.black.opacity(activeColor == color ? 0.65 : 0.0), lineWidth: 2)
+                                    )
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
                     .padding(8)
                     .background(Color(.systemGray6))
