@@ -1,5 +1,5 @@
 //
-//  OnboardingView.swift
+//  OnboardingFirstView.swift
 //  Swift-Student-Challenge
 //
 //  Created by 이은지 on 2/23/26.
@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct OnboardingView: View {
+struct OnboardingFirstView: View {
     @Binding var didFinish: Bool
 
     // "다음 배경화면의 색깔" 후보들 (원하면 더 추가 가능)
     private let backgrounds: [Color] = [
-        .red, .orange, .yellow, .green, .blue, .purple, .pink, .brown, .gray
+        .red, .orange, .yellow, .green
     ]
 
     @State private var bgIndex: Int = 0
