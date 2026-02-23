@@ -7,10 +7,6 @@
 
 import SwiftUI
 
-/// 요청한 Onboarding(약 30초) 화면
-/// - 배경색이 주기적으로 바뀜
-/// - 가운데 "Is This Red?"가 5줄 정도 반복
-/// - Yes/No 누르면 다음 배경색으로 전환되며, 몇 번 진행 후 종료
 struct OnboardingView: View {
     @Binding var didFinish: Bool
 
@@ -19,15 +15,8 @@ struct OnboardingView: View {
         .red, .orange, .yellow, .green, .blue, .purple, .pink, .brown, .gray
     ]
 
-    // 몇 번의 질문 스텝을 진행할지 (30초 내 데모용으로 5~7 추천)
-    private let totalSteps: Int = 6
-
-    @State private var stepIndex: Int = 0
     @State private var bgIndex: Int = 0
     @State private var breathing = false
-
-    // 배경이 자동으로 천천히 변하는 느낌(원하면 제거 가능)
-    @State private var timer: Timer?
 
     var body: some View {
         ZStack {
@@ -42,7 +31,7 @@ struct OnboardingView: View {
                 VStack(spacing: 6) {
                     ForEach(0..<5, id: \.self) { i in
                         Text("Is This Red?")
-                            .font(.system(size: 34, weight: .semibold, design: .rounded))
+                            .font(.system(size: 48, weight: .semibold, design: .rounded))
                             .foregroundStyle(.white.opacity(0.9))
                             .shadow(radius: 10)
                             .scaleEffect(breathing ? 1.02 : 0.98)
@@ -51,11 +40,6 @@ struct OnboardingView: View {
                     }
                 }
                 .padding(.horizontal, 24)
-
-                // 진행 표시(작게)
-                Text("Step \(min(stepIndex + 1, totalSteps)) / \(totalSteps)")
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
-                    .foregroundStyle(.white.opacity(0.85))
 
                 Spacer()
 
@@ -86,10 +70,6 @@ struct OnboardingView: View {
         .onAppear {
             breathing = true
         }
-        .onDisappear {
-            timer?.invalidate()
-            timer = nil
-        }
     }
 
     private var currentBackground: Color {
@@ -103,18 +83,15 @@ struct OnboardingView: View {
     }
 
     private func answerTapped(isYes: Bool) {
+        let nextIndex = (bgIndex + 1) % backgrounds.count
+
         // 버튼 클릭 시 즉시 다음 배경으로
         withAnimation(.easeInOut(duration: 0.45)) {
-            bgIndex = (bgIndex + 1) % backgrounds.count
+            bgIndex = nextIndex
         }
 
-        // 다음 스텝 진행
-        stepIndex += 1
-
-        // 몇 번 진행하면 온보딩 종료 → 드로잉 화면으로
-        if stepIndex >= totalSteps {
-            timer?.invalidate()
-            timer = nil
+        // 모든 배경을 순환했으면 다음 화면으로
+        if nextIndex == 0 {
             withAnimation(.easeInOut(duration: 0.35)) {
                 didFinish = true
             }
