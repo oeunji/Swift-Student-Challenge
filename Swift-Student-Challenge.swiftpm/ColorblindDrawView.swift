@@ -14,6 +14,10 @@ struct ColorblindDrawView: View {
     @State private var selectedMode: VisionMode = .protanopia
     @State private var simulatedImage: UIImage?
     
+    // Navigation용 상태
+    @State private var navigateToFix = false
+    @State private var snapshotImage: UIImage?
+    
     private let simulationService = VisionSimulationService()
     
     var body: some View {
@@ -30,11 +34,11 @@ struct ColorblindDrawView: View {
             
             ZStack {
                 
-                // 실제 캔버스는 숨김 (투명 처리)
+                // 실제 캔버스 (터치 입력용)
                 DrawingView(canvasView: $canvasView)
-                    .opacity(0.01)
+                    .opacity(0.01) // 사용자에게는 안 보임
                 
-                // 필터 적용된 이미지 보여주기
+                // 시뮬레이션된 이미지 표시
                 if let simulatedImage {
                     Image(uiImage: simulatedImage)
                         .resizable()
@@ -53,7 +57,36 @@ struct ColorblindDrawView: View {
             Text("Try drawing red and green. Can you tell the difference?")
                 .font(.footnote)
                 .foregroundColor(.secondary)
-                .padding(.bottom)
+                .padding(.bottom, 8)
+            
+            // 👉 다음 단계 버튼
+            Button {
+                createSnapshotAndNavigate()
+            } label: {
+                Text("Next: Fix Accessibility")
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .frame(maxWidth: .infinity, minHeight: 50)
+            }
+            .buttonStyle(.borderedProminent)
+            .padding(.horizontal)
+            .padding(.bottom, 20)
+            
+            // Navigation 연결
+            NavigationLink(
+                destination: Group {
+                    if let snapshotImage {
+                        AccessibilityFixView(
+                            originalImage: snapshotImage,
+                            visionMode: selectedMode
+                        )
+                    } else {
+                        EmptyView()
+                    }
+                },
+                isActive: $navigateToFix
+            ) {
+                EmptyView()
+            }
         }
         .navigationTitle("Draw As Them")
         .navigationBarTitleDisplayMode(.inline)
@@ -71,7 +104,26 @@ struct ColorblindDrawView: View {
     
     private func updateSimulation() {
         let size = CGSize(width: 1024, height: 1024)
-        let original = simulationService.render(drawing: canvasView.drawing, size: size)
-        simulatedImage = simulationService.simulate(image: original, mode: selectedMode)
+        let original = simulationService.render(
+            drawing: canvasView.drawing,
+            size: size
+        )
+        simulatedImage = simulationService.simulate(
+            image: original,
+            mode: selectedMode
+        )
+    }
+    
+    private func createSnapshotAndNavigate() {
+        let size = CGSize(width: 1024, height: 1024)
+        
+        // 실제 원본 드로잉을 렌더링
+        let original = simulationService.render(
+            drawing: canvasView.drawing,
+            size: size
+        )
+        
+        snapshotImage = original
+        navigateToFix = true
     }
 }
