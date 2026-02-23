@@ -31,7 +31,7 @@ struct OnboardingFirstView: View {
                 VStack(spacing: 6) {
                     ForEach(0..<5, id: \.self) { i in
                         Text("Is This Red?")
-                            .font(.system(size: 48, weight: .semibold, design: .rounded))
+                            .font(.system(size: 32, weight: .semibold, design: .rounded))
                             .foregroundStyle(.white.opacity(0.9))
                             .shadow(radius: 10)
                             .scaleEffect(breathing ? 1.02 : 0.98)

@@ -23,6 +23,7 @@ struct ColorblindDrawView: View {
     @State private var activeTool: ToolType = .pen
     @State private var penColor: Color = .red
     @State private var penWidth: Double = 6
+    @State private var isDrawing = false
 
     // Mission / Reveal
     @State private var isRevealActive = false
@@ -77,11 +78,6 @@ struct ColorblindDrawView: View {
                         .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 6)
                         .allowsHitTesting(false)
 
-                    // Input layer
-                    DrawingView(canvasView: $canvasView)
-                        .opacity(0.02)
-                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-
                     // Simulated (or normal) render
                     if let imageToShow = displayedImage {
                         Image(uiImage: imageToShow)
@@ -91,6 +87,11 @@ struct ColorblindDrawView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                             .allowsHitTesting(false)
                     }
+
+                    // Input layer (shows real ink while drawing)
+                    DrawingView(canvasView: $canvasView)
+                        .opacity(isDrawing ? 0.35 : 0.02)
+                        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
                     // Mission card
                     missionCard
@@ -165,6 +166,7 @@ struct ColorblindDrawView: View {
             updateSimulationForMode()
         }
         .onChange(of: canvasView.drawing) { _ in
+            isDrawing = true
             scheduleThrottledRender()
             scheduleFinalRender()
         }
@@ -358,6 +360,7 @@ struct ColorblindDrawView: View {
         idleWorkItem?.cancel()
         let item = DispatchWorkItem {
             renderAndSimulate()
+            isDrawing = false
         }
         idleWorkItem = item
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.35, execute: item)
