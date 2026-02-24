@@ -3,7 +3,6 @@ import PencilKit
 
 struct CreateView: View {
     @State private var canvasView = PKCanvasView()
-    // 현재 어떤 도구를 사용 중인지 추적하기 위한 상태
     @State private var activeTool: ToolType = .pen
     @State private var activeColor: Color = .black
     
@@ -71,8 +70,6 @@ struct CreateView: View {
                                 .foregroundColor(activeTool == .lasso ? .blue : .primary)
                         }
                         
-                        Image(systemName: "hand.raised")
-                        
                         Divider().frame(height: 20)
                         
                         ForEach(palette.indices, id: \.self) { index in
@@ -84,11 +81,13 @@ struct CreateView: View {
                             } label: {
                                 Circle()
                                     .fill(color)
-                                    .frame(width: 20, height: 20)
+                                    .frame(width: activeColor == color ? 24 : 20, height: activeColor == color ? 24 : 20)
                                     .overlay(
                                         Circle()
-                                            .stroke(.black.opacity(activeColor == color ? 0.65 : 0.0), lineWidth: 2)
+                                            .stroke(.white.opacity(activeColor == color ? 0.95 : 0.0), lineWidth: 2)
                                     )
+                                    .shadow(color: .black.opacity(activeColor == color ? 0.35 : 0.0), radius: 6, x: 0, y: 2)
+                                    .animation(.easeInOut(duration: 0.12), value: activeColor == color)
                             }
                             .buttonStyle(.plain)
                         }
