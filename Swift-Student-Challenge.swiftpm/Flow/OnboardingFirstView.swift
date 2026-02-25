@@ -37,6 +37,10 @@ struct OnboardingFirstView: View {
                             .shadow(radius: 10)
                             .opacity(opacityForLine(i))
                     }
+                    Spacer().frame(height: 8)
+                    Text("Choose Your Answer")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white.opacity(0.85))
                 }
                 .padding(.horizontal, 24)
 

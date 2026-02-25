@@ -24,14 +24,13 @@ struct OnboardingSecondView: View {
             Color.black
                 .ignoresSafeArea()
 
-            VStack(spacing: 14) {
+            VStack(spacing: 18) {
                 ForEach(0..<revealedCount, id: \.self) { index in
                     Text(lines[index])
                         .font(
                             .system(
                                 size: index == lines.count - 1 ? 24 : 22,
-                                weight: index == lines.count - 1 ? .bold : .semibold,
-                                design: .rounded
+                                weight: index == lines.count - 1 ? .bold : .semibold
                             )
                         )
                         .foregroundStyle(.white)
