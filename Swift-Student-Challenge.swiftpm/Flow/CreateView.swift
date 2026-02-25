@@ -48,7 +48,7 @@ struct CreateView: View {
                         
                         // 연필 버튼
                         Button(action: {
-                            setInkingTool(.pencil)
+                            setTool(.pencil)
                         }) {
                             Image(systemName: "pencil")
                                 .foregroundColor(activeTool == .pencil ? .blue : .primary)
@@ -56,7 +56,7 @@ struct CreateView: View {
 
                         // 펜 버튼
                         Button(action: {
-                            setInkingTool(.pen)
+                            setTool(.pen)
                         }) {
                             Image(systemName: "pencil.tip")
                                 .foregroundColor(activeTool == .pen ? .blue : .primary)
@@ -64,7 +64,7 @@ struct CreateView: View {
 
                         // 붓 버튼
                         Button(action: {
-                            setInkingTool(.marker)
+                            setTool(.brush)
                         }) {
                             Image(systemName: "paintbrush")
                                 .foregroundColor(activeTool == .brush ? .blue : .primary)
@@ -72,9 +72,7 @@ struct CreateView: View {
 
                         // 지우개 버튼 (핵심!)
                         Button(action: {
-                            activeTool = .eraser
-                            // .vector는 선 하나를 통째로 지우고, .bitmap은 문지르는 곳만 지웁니다.
-                            canvasView.tool = PKEraserTool(eraserMode)
+                            setTool(.eraser)
                         }) {
                             Image(systemName: "eraser")
                                 .foregroundColor(activeTool == .eraser ? .blue : .primary)
@@ -82,8 +80,7 @@ struct CreateView: View {
 
                         // 올가미 도구
                         Button(action: {
-                            activeTool = .lasso
-                            canvasView.tool = PKLassoTool()
+                            setTool(.lasso)
                         }) {
                             Image(systemName: "lasso")
                                 .foregroundColor(activeTool == .lasso ? .blue : .primary)
@@ -95,10 +92,10 @@ struct CreateView: View {
                             let color = palette[index]
                             Button {
                                 activeColor = color
-                                if let inking = currentInkingType {
-                                    setInkingTool(inking)
+                                if isInkingTool(activeTool) {
+                                    setTool(activeTool)
                                 } else {
-                                    setInkingTool(.pen)
+                                    setTool(.pen)
                                 }
                             } label: {
                                 Circle()
@@ -114,16 +111,17 @@ struct CreateView: View {
                             .buttonStyle(.plain)
                         }
 
-                        if let inking = currentInkingType {
+                        if let widthBinding = widthBinding(for: activeTool),
+                           let widthRange = widthRange(for: activeTool) {
                             Divider().frame(height: 20)
                             Slider(
-                                value: widthBinding(for: inking),
-                                in: widthRange(for: inking),
+                                value: widthBinding,
+                                in: widthRange,
                                 step: 1
                             )
                             .frame(width: 110)
-                            .onChange(of: widthBinding(for: inking).wrappedValue) { _ in
-                                setInkingTool(inking)
+                            .onChange(of: widthBinding.wrappedValue) { _ in
+                                setTool(activeTool)
                             }
                         }
 
@@ -131,14 +129,14 @@ struct CreateView: View {
                             Divider().frame(height: 20)
                             Button {
                                 eraserMode = .vector
-                                canvasView.tool = PKEraserTool(eraserMode)
+                                setTool(.eraser)
                             } label: {
                                 Image(systemName: "eraser.line.dashed")
                                     .foregroundColor(eraserMode == .vector ? .blue : .primary)
                             }
                             Button {
                                 eraserMode = .bitmap
-                                canvasView.tool = PKEraserTool(eraserMode)
+                                setTool(.eraser)
                             } label: {
                                 Image(systemName: "eraser")
                                     .foregroundColor(eraserMode == .bitmap ? .blue : .primary)
@@ -153,47 +151,48 @@ struct CreateView: View {
         }
     }
 
-    private var currentInkingType: PKInkingTool.InkType? {
-        switch activeTool {
-        case .pencil: return .pencil
-        case .pen: return .pen
-        case .brush: return .marker
-        case .eraser, .lasso: return nil
+    private func isInkingTool(_ tool: ToolType) -> Bool {
+        switch tool {
+        case .pencil, .pen, .brush: return true
+        case .eraser, .lasso: return false
         }
     }
 
-    private func setInkingTool(_ ink: PKInkingTool.InkType) {
-        switch ink {
+    private func setTool(_ tool: ToolType) {
+        switch tool {
         case .pencil:
             activeTool = .pencil
             canvasView.tool = PKInkingTool(.pencil, color: UIColor(activeColor), width: pencilWidth)
         case .pen:
             activeTool = .pen
             canvasView.tool = PKInkingTool(.pen, color: UIColor(activeColor), width: penWidth)
-        case .marker:
+        case .brush:
             activeTool = .brush
             canvasView.tool = PKInkingTool(.marker, color: UIColor(activeColor), width: brushWidth)
-        @unknown default:
-            activeTool = .pen
-            canvasView.tool = PKInkingTool(.pen, color: UIColor(activeColor), width: penWidth)
+        case .eraser:
+            activeTool = .eraser
+            canvasView.tool = PKEraserTool(eraserMode)
+        case .lasso:
+            activeTool = .lasso
+            canvasView.tool = PKLassoTool()
         }
     }
 
-    private func widthBinding(for ink: PKInkingTool.InkType) -> Binding<Double> {
-        switch ink {
+    private func widthBinding(for tool: ToolType) -> Binding<Double>? {
+        switch tool {
         case .pencil: return $pencilWidth
         case .pen: return $penWidth
-        case .marker: return $brushWidth
-        @unknown default: return $penWidth
+        case .brush: return $brushWidth
+        case .eraser, .lasso: return nil
         }
     }
 
-    private func widthRange(for ink: PKInkingTool.InkType) -> ClosedRange<Double> {
-        switch ink {
+    private func widthRange(for tool: ToolType) -> ClosedRange<Double>? {
+        switch tool {
         case .pencil: return 2...10
         case .pen: return 2...12
-        case .marker: return 4...18
-        @unknown default: return 2...12
+        case .brush: return 4...18
+        case .eraser, .lasso: return nil
         }
     }
 }
