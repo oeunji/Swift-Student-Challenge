@@ -9,6 +9,7 @@ struct CreateView: View {
     @State private var penWidth: Double = 5
     @State private var brushWidth: Double = 7
     @State private var eraserMode: PKEraserTool.EraserType = .vector
+    @Environment(\.dismiss) private var dismiss
     
     enum ToolType {
         case pencil, pen, brush, eraser, lasso
@@ -17,29 +18,28 @@ struct CreateView: View {
     private let palette: [Color] = [.black, .red, .yellow, .green, .blue, .purple]
 
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .top) {
-                DrawingView(canvasView: $canvasView)
-                    .ignoresSafeArea(edges: .bottom)
+        ZStack(alignment: .top) {
+            DrawingView(canvasView: $canvasView)
+                .ignoresSafeArea(edges: .bottom)
+        }
+        .safeAreaInset(edge: .bottom) {
+            NavigationLink {
+                VisionSimView(canvasView: $canvasView, onFinish: { dismiss() })
+            } label: {
+                Text("See Through Their Eyes")
+                    .font(.system(size: 18, weight: .semibold, design: .rounded))
+                    .frame(maxWidth: .infinity, minHeight: 52)
             }
-            .safeAreaInset(edge: .bottom) {
-                NavigationLink {
-                    VisionSimView(canvasView: $canvasView)
-                } label: {
-                    Text("See Through Their Eyes")
-                        .font(.system(size: 18, weight: .semibold, design: .rounded))
-                        .frame(maxWidth: .infinity, minHeight: 52)
-                }
-                .buttonStyle(.borderedProminent)
-                .padding(.horizontal, 20)
-                .padding(.vertical, 12)
-                .background(.thinMaterial)
-            }
-            .navigationTitle("Bio_DNA")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItemGroup(placement: .principal) {
-                    HStack(spacing: 15) {
+            .buttonStyle(.borderedProminent)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
+            .background(.thinMaterial)
+        }
+        .navigationTitle("Bio_DNA")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItemGroup(placement: .principal) {
+                HStack(spacing: 15) {
                         // 실행 취소 / 다시 실행
                         Button(action: { canvasView.undoManager?.undo() }) { Image(systemName: "arrow.uturn.backward") }
                         Button(action: { canvasView.undoManager?.redo() }) { Image(systemName: "arrow.uturn.forward") }
@@ -142,11 +142,10 @@ struct CreateView: View {
                                     .foregroundColor(eraserMode == .bitmap ? .blue : .primary)
                             }
                         }
-                    }
-                    .padding(8)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(10)
                 }
+                .padding(8)
+                .background(Color(.systemGray6))
+                .cornerRadius(10)
             }
         }
     }

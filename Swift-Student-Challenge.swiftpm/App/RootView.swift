@@ -14,7 +14,7 @@ struct RootView: View {
 
     var body: some View {
         if didFinishOnboarding {
-            CreateView()
+            ExperienceModeSelectView()
         } else if didFinishFirst {
             OnboardingSecondView(didFinish: $didFinishOnboarding)
         } else {

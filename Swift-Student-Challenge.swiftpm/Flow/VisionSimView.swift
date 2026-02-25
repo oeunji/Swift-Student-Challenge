@@ -11,6 +11,8 @@ import PencilKit
 struct VisionSimView: View {
     
     @Binding var canvasView: PKCanvasView
+    @Environment(\.dismiss) private var dismiss
+    var onFinish: (() -> Void)? = nil
     
     @State private var selectedMode: VisionMode = .protanopia
     @State private var simulatedImage: UIImage?
@@ -76,9 +78,13 @@ struct VisionSimView: View {
             updateRenderRect()
             updateSimulation(rect: renderRect)
         }
-        
-        NavigationLink("Draw As Them") {
-            ColorblindDrawView()
+        Button("Finish Your Experience") {
+            dismiss()
+            if let onFinish {
+                DispatchQueue.main.async {
+                    onFinish()
+                }
+            }
         }
         .padding()
     }
