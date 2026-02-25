@@ -19,25 +19,21 @@ struct ColorblindDrawView: View {
 
     @State private var renderSize: CGSize = .zero
 
-    // Tool state
     @State private var activeTool: ToolType = .pen
     @State private var penColor: Color = .red
     @State private var penWidth: Double = 6
     @State private var isDrawing = false
 
-    // Mission / Reveal
     @State private var isRevealActive = false
     @State private var revealSelection: RevealSelection = .simulated
 
-    // Navigation
     @State private var navigateToFix = false
     @State private var snapshotImage: UIImage?
 
-    // Alerts
     @State private var showClearAlert = false
 
     private let simulationService = VisionSimulationService()
-    private let throttler = RenderThrottler(minInterval: 1.0 / 12.0) // ~12 fps
+    private let throttler = RenderThrottler(minInterval: 1.0 / 12.0)
     @State private var idleWorkItem: DispatchWorkItem?
 
     enum ToolType {
@@ -53,7 +49,6 @@ struct ColorblindDrawView: View {
     var body: some View {
         VStack(spacing: 12) {
 
-            // Mode selector
             Picker("Vision Mode", selection: $selectedMode) {
                 ForEach(VisionMode.allCases.filter { $0 != .normal }, id: \.self) { mode in
                     Text(mode.rawValue).tag(mode)
@@ -66,11 +61,9 @@ struct ColorblindDrawView: View {
                 updateSimulationForMode()
             }
 
-            // Lightweight toolbar
             toolbar
                 .padding(.horizontal)
 
-            // Drawing area
             GeometryReader { geo in
                 ZStack(alignment: .topLeading) {
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
@@ -78,27 +71,24 @@ struct ColorblindDrawView: View {
                         .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 6)
                         .allowsHitTesting(false)
 
-                    // Simulated (or normal) render
                     if let imageToShow = displayedImage {
                         Image(uiImage: imageToShow)
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                            .opacity(isDrawing ? 0.35 : 1.0)
                             .allowsHitTesting(false)
                     }
 
-                    // Input layer (shows real ink while drawing)
                     DrawingView(canvasView: $canvasView)
-                        .opacity(isDrawing ? 0.35 : 0.02)
+                        .opacity(isDrawing ? 1.0 : 0.02)
                         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
-                    // Mission card
                     missionCard
                         .padding(14)
                         .allowsHitTesting(true)
 
-                    // Reveal toggle (appears after reveal)
                     if isRevealActive {
                         revealPicker
                             .padding(14)
@@ -116,7 +106,6 @@ struct ColorblindDrawView: View {
             }
             .padding(.horizontal)
 
-            // Reveal button
             Button {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     isRevealActive = true
@@ -130,7 +119,6 @@ struct ColorblindDrawView: View {
             .buttonStyle(.bordered)
             .padding(.horizontal)
 
-            // CTA
             Button {
                 createSnapshotAndNavigate()
             } label: {
@@ -142,7 +130,6 @@ struct ColorblindDrawView: View {
             .padding(.horizontal)
             .padding(.bottom, 16)
 
-            // Navigation link
             NavigationLink(
                 destination: Group {
                     if let snapshotImage {
@@ -186,7 +173,6 @@ struct ColorblindDrawView: View {
 
     private var toolbar: some View {
         HStack(spacing: 12) {
-            // Undo / Redo
             Button(action: { canvasView.undoManager?.undo() }) {
                 Image(systemName: "arrow.uturn.backward")
             }
@@ -196,7 +182,6 @@ struct ColorblindDrawView: View {
 
             Divider().frame(height: 18)
 
-            // Pen / Eraser
             Button {
                 activeTool = .pen
                 applyTool()
@@ -215,7 +200,6 @@ struct ColorblindDrawView: View {
 
             Divider().frame(height: 18)
 
-            // Colors
             HStack(spacing: 8) {
                 colorButton(.red)
                 colorButton(.green)
@@ -225,7 +209,6 @@ struct ColorblindDrawView: View {
 
             Divider().frame(height: 18)
 
-            // Width
             HStack(spacing: 8) {
                 Image(systemName: "lineweight")
                     .font(.system(size: 12))
@@ -242,7 +225,6 @@ struct ColorblindDrawView: View {
 
             Spacer(minLength: 0)
 
-            // Clear
             Button {
                 showClearAlert = true
             } label: {

@@ -8,15 +8,12 @@
 import UIKit
 
 struct ExportBundle {
-    let summaryImage: UIImage   // 2x2 합성(정상 before/after + 시뮬 before/after)
-    let reportImage: UIImage    // 간단 리포트 카드 이미지
+    let summaryImage: UIImage
+    let reportImage: UIImage
 }
 
 final class ExportService {
-
-    /// 2x2 Summary 생성:
-    /// [ Normal Before | Normal After ]
-    /// [ Sim Before    | Sim After   ]
+    
     func makeSummaryGrid(
         normalBefore: UIImage,
         normalAfter: UIImage,
@@ -24,7 +21,6 @@ final class ExportService {
         simulatedAfter: UIImage,
         title: String = "Is This Red? — Summary"
     ) -> UIImage {
-        // 동일 사이즈로 맞추기
         let cellSize = CGSize(width: 700, height: 700)
         let nb = normalBefore.scaledToFit(in: cellSize)
         let na = normalAfter.scaledToFit(in: cellSize)
@@ -42,11 +38,9 @@ final class ExportService {
         UIGraphicsBeginImageContextWithOptions(size, true, 2.0)
         defer { UIGraphicsEndImageContext() }
 
-        // Background
         UIColor.systemBackground.setFill()
         UIRectFill(CGRect(origin: .zero, size: size))
 
-        // Header
         drawText(
             title,
             in: CGRect(x: padding, y: padding, width: canvasW - padding * 2, height: headerH),
@@ -54,26 +48,22 @@ final class ExportService {
             color: .label
         )
 
-        // Coordinates
         let row1Y = padding + headerH + padding
         let row2Y = row1Y + labelH + cellSize.height + padding
 
         let col1X = padding
         let col2X = padding + cellSize.width + padding
 
-        // Labels
         drawChip("Normal — Before", at: CGPoint(x: col1X, y: row1Y), width: cellSize.width, height: labelH)
         drawChip("Normal — After",  at: CGPoint(x: col2X, y: row1Y), width: cellSize.width, height: labelH)
         drawChip("Sim — Before",    at: CGPoint(x: col1X, y: row2Y), width: cellSize.width, height: labelH)
         drawChip("Sim — After",     at: CGPoint(x: col2X, y: row2Y), width: cellSize.width, height: labelH)
 
-        // Images
         nb.draw(in: CGRect(x: col1X, y: row1Y + labelH, width: cellSize.width, height: cellSize.height))
         na.draw(in: CGRect(x: col2X, y: row1Y + labelH, width: cellSize.width, height: cellSize.height))
         sb.draw(in: CGRect(x: col1X, y: row2Y + labelH, width: cellSize.width, height: cellSize.height))
         sa.draw(in: CGRect(x: col2X, y: row2Y + labelH, width: cellSize.width, height: cellSize.height))
 
-        // Card borders
         strokeRoundedRect(CGRect(x: col1X, y: row1Y + labelH, width: cellSize.width, height: cellSize.height))
         strokeRoundedRect(CGRect(x: col2X, y: row1Y + labelH, width: cellSize.width, height: cellSize.height))
         strokeRoundedRect(CGRect(x: col1X, y: row2Y + labelH, width: cellSize.width, height: cellSize.height))
@@ -82,7 +72,6 @@ final class ExportService {
         return UIGraphicsGetImageFromCurrentImageContext()!
     }
 
-    /// 간단 Report 카드 이미지 생성
     func makeReportCard(
         visionModeName: String,
         patternName: String,
@@ -97,13 +86,11 @@ final class ExportService {
         UIColor.systemBackground.setFill()
         UIRectFill(CGRect(origin: .zero, size: size))
 
-        // Card
         let cardRect = CGRect(x: 60, y: 60, width: size.width - 120, height: size.height - 120)
         let path = UIBezierPath(roundedRect: cardRect, cornerRadius: 40)
         UIColor.secondarySystemBackground.setFill()
         path.fill()
 
-        // Title
         drawText(
             "Accessibility Report",
             in: CGRect(x: cardRect.minX + 50, y: cardRect.minY + 44, width: cardRect.width - 100, height: 60),
@@ -111,7 +98,6 @@ final class ExportService {
             color: .label
         )
 
-        // Rows
         let startY = cardRect.minY + 130
         let rowH: CGFloat = 74
 

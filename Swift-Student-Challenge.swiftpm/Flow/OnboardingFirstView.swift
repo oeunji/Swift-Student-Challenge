@@ -10,13 +10,15 @@ import SwiftUI
 struct OnboardingFirstView: View {
     @Binding var didFinish: Bool
 
-    // "다음 배경화면의 색깔" 후보들 (원하면 더 추가 가능)
     private let backgrounds: [Color] = [
-        .red, .orange, .yellow, .green
+        Color(red: 1.0, green: 0.1843, blue: 0.1843),    // #FF2F2F
+        Color(red: 0.7176, green: 0.7451, blue: 0.1569), // #B7BE28
+        Color(red: 0.8392, green: 0.8588, blue: 0.1843), // #D6DB2F
+        Color(red: 0.7176, green: 0.7451, blue: 0.1569), // #B7BE28
+        Color(red: 1.0, green: 0.2275, blue: 0.1961)     // #FF3A32
     ]
 
     @State private var bgIndex: Int = 0
-    @State private var breathing = false
 
     var body: some View {
         ZStack {
@@ -27,23 +29,19 @@ struct OnboardingFirstView: View {
             VStack(spacing: 28) {
                 Spacer()
 
-                // 중앙 반복 타이포
                 VStack(spacing: 6) {
                     ForEach(0..<5, id: \.self) { i in
                         Text("Is This Red?")
-                            .font(.system(size: 32, weight: .semibold, design: .rounded))
+                            .font(.system(size: 32, weight: .semibold))
                             .foregroundStyle(.white.opacity(0.9))
                             .shadow(radius: 10)
-                            .scaleEffect(breathing ? 1.02 : 0.98)
                             .opacity(opacityForLine(i))
-                            .animation(.easeInOut(duration: 1.2).repeatForever(autoreverses: true), value: breathing)
                     }
                 }
                 .padding(.horizontal, 24)
 
                 Spacer()
 
-                // Yes/No 버튼
                 HStack(spacing: 14) {
                     Button {
                         answerTapped(isYes: true)
@@ -67,9 +65,6 @@ struct OnboardingFirstView: View {
                 .padding(.bottom, 34)
             }
         }
-        .onAppear {
-            breathing = true
-        }
     }
 
     private var currentBackground: Color {
@@ -77,7 +72,6 @@ struct OnboardingFirstView: View {
     }
 
     private func opacityForLine(_ i: Int) -> Double {
-        // 위에서 아래로 약간 페이드
         let base = 0.95 - (Double(i) * 0.12)
         return max(0.35, base)
     }
@@ -85,7 +79,6 @@ struct OnboardingFirstView: View {
     private func answerTapped(isYes: Bool) {
         let nextIndex = (bgIndex + 1) % backgrounds.count
 
-        // 버튼 클릭 시 즉시 다음 배경으로
         withAnimation(.easeInOut(duration: 0.45)) {
             bgIndex = nextIndex
         }
@@ -99,7 +92,6 @@ struct OnboardingFirstView: View {
     }
 }
 
-/// 유리(Glass) 느낌 버튼 스타일
 struct GlassButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

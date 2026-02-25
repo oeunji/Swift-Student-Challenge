@@ -10,13 +10,12 @@ import SwiftUI
 struct AccessibilityFixView: View {
     
     let originalImage: UIImage
-    let visionMode: VisionMode  // 사용자가 선택했던 모드(See/Draw 단계에서 이어받기)
+    let visionMode: VisionMode
     
     @State private var pattern: PatternStyle = .diagonalStripes
     @State private var intensity: CGFloat = 0.7
     @State private var addLegend: Bool = true
     
-    // 대비 체커: 사용자가 대표 색 2개를 선택하도록(“해결책 제시” 느낌)
     @State private var colorA: Color = .red
     @State private var colorB: Color = .green
     
@@ -26,6 +25,10 @@ struct AccessibilityFixView: View {
     private let simService = VisionSimulationService()
     
     @State private var goShare = false
+
+    @State private var fixedImage: UIImage?
+    @State private var simulatedBeforeCache: UIImage?
+    @State private var simulatedAfterCache: UIImage?
 
     @State private var normalAfterImage: UIImage?
     @State private var simulatedBeforeImage: UIImage?
@@ -37,14 +40,11 @@ struct AccessibilityFixView: View {
                 
                 header
                 
-                // 미리보기: Normal vs Selected Mode, Original vs Fixed 토글
                 previewCard
                 
-                // 대비 측정기
-                ContrastMeterView(colorA: $colorA, colorB: $colorB)
-                
-                // 개선 옵션
                 optionsCard
+                
+                ContrastMeterView(colorA: $colorA, colorB: $colorB)
                 
                 Button {
                     generateExportImages()
@@ -59,6 +59,18 @@ struct AccessibilityFixView: View {
         }
         .navigationTitle("Accessibility Fix")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            rebuildFixedPreview()
+        }
+        .onChange(of: pattern) { _ in
+            rebuildFixedPreview()
+        }
+        .onChange(of: intensity) { _ in
+            rebuildFixedPreview()
+        }
+        .onChange(of: addLegend) { _ in
+            rebuildFixedPreview()
+        }
         
         NavigationLink(
             destination: destinationView,
@@ -81,22 +93,15 @@ struct AccessibilityFixView: View {
     private var previewCard: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Preview")
+                Text("Problem / Solution")
                     .font(.headline)
                 Spacer()
                 Toggle("Simulate \(visionMode.rawValue)", isOn: $showSimulatedPreview)
-                    .labelsHidden()
             }
             
-            let fixed = fixService.applyFixes(
-                to: originalImage,
-                pattern: pattern,
-                patternIntensity: intensity,
-                addLegend: addLegend
-            )
-            
-            let left = showSimulatedPreview ? simService.simulate(image: originalImage, mode: visionMode) : originalImage
-            let right = showSimulatedPreview ? simService.simulate(image: fixed, mode: visionMode) : fixed
+            let fixed = fixedImage ?? originalImage
+            let left = showSimulatedPreview ? (simulatedBeforeCache ?? originalImage) : originalImage
+            let right = showSimulatedPreview ? (simulatedAfterCache ?? fixed) : fixed
             
             HStack(spacing: 12) {
                 VStack(spacing: 6) {
@@ -126,7 +131,7 @@ struct AccessibilityFixView: View {
     
     private var optionsCard: some View {
         VStack(alignment: .leading, spacing: 14) {
-            Text("Non-color cues")
+            Text("Solution: Non-color cues")
                 .font(.headline)
             
             Picker("Pattern", selection: $pattern) {
@@ -182,17 +187,32 @@ struct AccessibilityFixView: View {
         }
     }
     
-    private func generateExportImages() {
+    private func rebuildFixedPreview() {
         let fixed = fixService.applyFixes(
             to: originalImage,
             pattern: pattern,
             patternIntensity: intensity,
             addLegend: addLegend
         )
-        
+        fixedImage = fixed
+
+        if simulatedBeforeCache == nil {
+            simulatedBeforeCache = simService.simulate(image: originalImage, mode: visionMode)
+        }
+        simulatedAfterCache = simService.simulate(image: fixed, mode: visionMode)
+    }
+
+    private func generateExportImages() {
+        let fixed = fixedImage ?? fixService.applyFixes(
+            to: originalImage,
+            pattern: pattern,
+            patternIntensity: intensity,
+            addLegend: addLegend
+        )
+
         normalAfterImage = fixed
-        simulatedBeforeImage = simService.simulate(image: originalImage, mode: visionMode)
-        simulatedAfterImage = simService.simulate(image: fixed, mode: visionMode)
+        simulatedBeforeImage = simulatedBeforeCache ?? simService.simulate(image: originalImage, mode: visionMode)
+        simulatedAfterImage = simulatedAfterCache ?? simService.simulate(image: fixed, mode: visionMode)
         
         goShare = true
     }

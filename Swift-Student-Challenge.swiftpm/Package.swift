@@ -8,19 +8,19 @@ import PackageDescription
 import AppleProductTypes
 
 let package = Package(
-    name: "Swift-Student-Challenge",
+    name: "Is This Red?",
     platforms: [
         .iOS("16.0")
     ],
     products: [
         .iOSApplication(
-            name: "Swift-Student-Challenge",
+            name: "Is This Red?",
             targets: ["AppModule"],
             bundleIdentifier: "com.eunji.Swift-Student-Challenge.Swift-Student-Challenge",
             teamIdentifier: "AT9KX3ZBW6",
             displayVersion: "1.0",
             bundleVersion: "1",
-            appIcon: .placeholder(icon: .note),
+            appIcon: .asset("AppIcon"),
             accentColor: .presetColor(.green),
             supportedDeviceFamilies: [
                 .pad,
@@ -40,5 +40,5 @@ let package = Package(
             path: "."
         )
     ],
-    swiftLanguageModes: [.v6]
+    swiftLanguageVersions: [.version("6")]
 )

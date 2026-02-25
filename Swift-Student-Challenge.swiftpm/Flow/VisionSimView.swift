@@ -11,6 +11,8 @@ import PencilKit
 struct VisionSimView: View {
     
     @Binding var canvasView: PKCanvasView
+    @Environment(\.dismiss) private var dismiss
+    var onFinish: (() -> Void)? = nil
     
     @State private var selectedMode: VisionMode = .protanopia
     @State private var simulatedImage: UIImage?
@@ -23,7 +25,7 @@ struct VisionSimView: View {
             
             // 모드 선택
             Picker("Mode", selection: $selectedMode) {
-                ForEach(VisionMode.allCases, id: \.self) { mode in
+                ForEach(VisionMode.allCases.filter { $0 != .normal }, id: \.self) { mode in
                     Text(mode.rawValue).tag(mode)
                 }
             }
@@ -76,9 +78,13 @@ struct VisionSimView: View {
             updateRenderRect()
             updateSimulation(rect: renderRect)
         }
-        
-        NavigationLink("Draw As Them") {
-            ColorblindDrawView()
+        Button("Finish Your Experience") {
+            dismiss()
+            if let onFinish {
+                DispatchQueue.main.async {
+                    onFinish()
+                }
+            }
         }
         .padding()
     }

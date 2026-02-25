@@ -11,11 +11,11 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 
 enum VisionMode: String, CaseIterable {
-    case normal = "Normal"
-    case protanopia = "Protanopia"
-    case deuteranopia = "Deuteranopia"
-    case tritanopia = "Tritanopia"
-    case achromatopsia = "Achromatopsia"
+    case normal = "Normal"  // 일반
+    case protanopia = "Protanopia"  // 적생맹
+    case deuteranopia = "Deuteranopia"  // 녹색맹
+    case tritanopia = "Tritanopia"  // 청색맹
+    case achromatopsia = "Achromatopsia"    // 전색맹
 }
 
 final class VisionSimulationService {
@@ -62,12 +62,10 @@ final class VisionSimulationService {
         return UIImage(cgImage: cgImage)
     }
     
-    // PKDrawing → UIImage
     func render(drawing: PKDrawing, size: CGSize) -> UIImage {
         return drawing.image(from: CGRect(origin: .zero, size: size), scale: 1.0)
     }
 
-    // PKDrawing → UIImage (특정 rect 범위만 렌더)
     func render(drawing: PKDrawing, rect: CGRect) -> UIImage {
         return drawing.image(from: rect, scale: 1.0)
     }
