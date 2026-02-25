@@ -45,7 +45,6 @@ struct ExperienceModeSelectView: View {
                 .padding(.horizontal, 32)
 
                 Spacer()
-                Spacer()
             }
         }
     }
@@ -70,7 +69,7 @@ struct ExperienceModeSelectView: View {
             .frame(maxWidth: .infinity, minHeight: 56)
             .padding(.vertical, 6)
             .background(Color(.systemGray4))
-            .clipShape(RoundedRectangle(cornerRadius: 6))
+            .clipShape(RoundedRectangle(cornerRadius: 20))
         }
         .buttonStyle(.plain)
     }
