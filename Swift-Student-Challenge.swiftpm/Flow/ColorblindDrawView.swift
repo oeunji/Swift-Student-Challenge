@@ -85,12 +85,13 @@ struct ColorblindDrawView: View {
                             .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                             .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                            .opacity(isDrawing ? 0.35 : 1.0)
                             .allowsHitTesting(false)
                     }
 
                     // Input layer (shows real ink while drawing)
                     DrawingView(canvasView: $canvasView)
-                        .opacity(isDrawing ? 0.35 : 0.02)
+                        .opacity(isDrawing ? 1.0 : 0.02)
                         .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
 
                     // Mission card
