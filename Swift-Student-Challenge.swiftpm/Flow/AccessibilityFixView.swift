@@ -10,13 +10,12 @@ import SwiftUI
 struct AccessibilityFixView: View {
     
     let originalImage: UIImage
-    let visionMode: VisionMode  // 사용자가 선택했던 모드(See/Draw 단계에서 이어받기)
+    let visionMode: VisionMode
     
     @State private var pattern: PatternStyle = .diagonalStripes
     @State private var intensity: CGFloat = 0.7
     @State private var addLegend: Bool = true
     
-    // 대비 체커: 사용자가 대표 색 2개를 선택하도록(“해결책 제시” 느낌)
     @State private var colorA: Color = .red
     @State private var colorB: Color = .green
     
@@ -41,13 +40,10 @@ struct AccessibilityFixView: View {
                 
                 header
                 
-                // 미리보기: Normal vs Selected Mode, Original vs Fixed 토글
                 previewCard
                 
-                // 개선 옵션
                 optionsCard
                 
-                // 대비 측정기
                 ContrastMeterView(colorA: $colorA, colorB: $colorB)
                 
                 Button {

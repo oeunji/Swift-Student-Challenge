@@ -62,12 +62,10 @@ final class VisionSimulationService {
         return UIImage(cgImage: cgImage)
     }
     
-    // PKDrawing → UIImage
     func render(drawing: PKDrawing, size: CGSize) -> UIImage {
         return drawing.image(from: CGRect(origin: .zero, size: size), scale: 1.0)
     }
 
-    // PKDrawing → UIImage (특정 rect 범위만 렌더)
     func render(drawing: PKDrawing, rect: CGRect) -> UIImage {
         return drawing.image(from: rect, scale: 1.0)
     }

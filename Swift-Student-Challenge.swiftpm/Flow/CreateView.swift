@@ -40,13 +40,11 @@ struct CreateView: View {
         .toolbar {
             ToolbarItemGroup(placement: .principal) {
                 HStack(spacing: 15) {
-                        // 실행 취소 / 다시 실행
                         Button(action: { canvasView.undoManager?.undo() }) { Image(systemName: "arrow.uturn.backward") }
                         Button(action: { canvasView.undoManager?.redo() }) { Image(systemName: "arrow.uturn.forward") }
                         
                         Divider().frame(height: 20)
                         
-                        // 연필 버튼
                         Button(action: {
                             setTool(.pencil)
                         }) {
@@ -54,7 +52,6 @@ struct CreateView: View {
                                 .foregroundColor(activeTool == .pencil ? .blue : .primary)
                         }
 
-                        // 펜 버튼
                         Button(action: {
                             setTool(.pen)
                         }) {
@@ -62,7 +59,6 @@ struct CreateView: View {
                                 .foregroundColor(activeTool == .pen ? .blue : .primary)
                         }
 
-                        // 붓 버튼
                         Button(action: {
                             setTool(.brush)
                         }) {
@@ -70,7 +66,6 @@ struct CreateView: View {
                                 .foregroundColor(activeTool == .brush ? .blue : .primary)
                         }
 
-                        // 지우개 버튼 (핵심!)
                         Button(action: {
                             setTool(.eraser)
                         }) {
@@ -78,7 +73,6 @@ struct CreateView: View {
                                 .foregroundColor(activeTool == .eraser ? .blue : .primary)
                         }
 
-                        // 올가미 도구
                         Button(action: {
                             setTool(.lasso)
                         }) {

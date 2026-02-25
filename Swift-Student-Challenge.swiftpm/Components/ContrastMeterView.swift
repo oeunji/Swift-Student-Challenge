@@ -57,7 +57,6 @@ struct ContrastMeterView: View {
     }
 }
 
-/// 간단 스와치
 private struct ColorSwatch: View {
     let color: Color
     let label: String
@@ -74,7 +73,6 @@ private struct ColorSwatch: View {
     }
 }
 
-// MARK: - Contrast math (WCAG)
 private func contrastRatio(_ a: Color, _ b: Color) -> Double {
     let la = relativeLuminance(a)
     let lb = relativeLuminance(b)

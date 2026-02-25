@@ -29,7 +29,6 @@ struct OnboardingFirstView: View {
             VStack(spacing: 28) {
                 Spacer()
 
-                // 중앙 반복 타이포
                 VStack(spacing: 6) {
                     ForEach(0..<5, id: \.self) { i in
                         Text("Is This Red?")
@@ -43,7 +42,6 @@ struct OnboardingFirstView: View {
 
                 Spacer()
 
-                // Yes/No 버튼
                 HStack(spacing: 14) {
                     Button {
                         answerTapped(isYes: true)
@@ -74,7 +72,6 @@ struct OnboardingFirstView: View {
     }
 
     private func opacityForLine(_ i: Int) -> Double {
-        // 위에서 아래로 약간 페이드
         let base = 0.95 - (Double(i) * 0.12)
         return max(0.35, base)
     }
@@ -82,7 +79,6 @@ struct OnboardingFirstView: View {
     private func answerTapped(isYes: Bool) {
         let nextIndex = (bgIndex + 1) % backgrounds.count
 
-        // 버튼 클릭 시 즉시 다음 배경으로
         withAnimation(.easeInOut(duration: 0.45)) {
             bgIndex = nextIndex
         }
@@ -96,7 +92,6 @@ struct OnboardingFirstView: View {
     }
 }
 
-/// 유리(Glass) 느낌 버튼 스타일
 struct GlassButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
