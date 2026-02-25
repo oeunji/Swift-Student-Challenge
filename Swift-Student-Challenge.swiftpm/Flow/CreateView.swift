@@ -8,6 +8,7 @@ struct CreateView: View {
     @State private var pencilWidth: Double = 4
     @State private var penWidth: Double = 5
     @State private var brushWidth: Double = 7
+    @State private var eraserMode: PKEraserTool.EraserType = .vector
     
     enum ToolType {
         case pencil, pen, brush, eraser, lasso
@@ -73,7 +74,7 @@ struct CreateView: View {
                         Button(action: {
                             activeTool = .eraser
                             // .vector는 선 하나를 통째로 지우고, .bitmap은 문지르는 곳만 지웁니다.
-                            canvasView.tool = PKEraserTool(.vector)
+                            canvasView.tool = PKEraserTool(eraserMode)
                         }) {
                             Image(systemName: "eraser")
                                 .foregroundColor(activeTool == .eraser ? .blue : .primary)
@@ -123,6 +124,24 @@ struct CreateView: View {
                             .frame(width: 110)
                             .onChange(of: widthBinding(for: inking).wrappedValue) { _ in
                                 setInkingTool(inking)
+                            }
+                        }
+
+                        if activeTool == .eraser {
+                            Divider().frame(height: 20)
+                            Button {
+                                eraserMode = .vector
+                                canvasView.tool = PKEraserTool(eraserMode)
+                            } label: {
+                                Image(systemName: "eraser.line.dashed")
+                                    .foregroundColor(eraserMode == .vector ? .blue : .primary)
+                            }
+                            Button {
+                                eraserMode = .bitmap
+                                canvasView.tool = PKEraserTool(eraserMode)
+                            } label: {
+                                Image(systemName: "eraser")
+                                    .foregroundColor(eraserMode == .bitmap ? .blue : .primary)
                             }
                         }
                     }
