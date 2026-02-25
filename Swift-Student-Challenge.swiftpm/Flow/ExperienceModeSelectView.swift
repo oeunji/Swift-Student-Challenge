@@ -11,74 +11,66 @@ struct ExperienceModeSelectView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 16) {
-                Text("Choose Your Experience")
-                    .font(.system(size: 24, weight: .bold, design: .rounded))
-                    .padding(.top, 24)
+                Spacer()
 
-                modeCard(
-                    title: "See Through Their Eyes",
-                    subtitle: "Simulate how your drawing looks to them",
-                    systemImage: "eye"
-                ) {
-                    CreateView()
-                }
+                Text("Is This Red?")
+                    .font(.system(size: 96, weight: .heavy))
+                    .foregroundColor(Color(red: 0.95, green: 0.24, blue: 0.22))
 
-                modeCard(
-                    title: "Draw As Them",
-                    subtitle: "Draw with color-vision limits",
-                    systemImage: "pencil.and.outline"
-                ) {
-                    ColorblindDrawView()
-                }
+                Text("The color you see isn’t the color everyone sees.")
+                    .font(.system(size: 24, weight: .semibold))
+                    .foregroundColor(.black)
 
                 Spacer()
+
+                Text("Choose Your Experience")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(.black.opacity(0.8))
+
+                HStack(spacing: 16) {
+                    modeButton(
+                        title: "See Through Their Eyes",
+                        subtitle: "Simulate how your drawing looks to them"
+                    ) {
+                        CreateView()
+                    }
+
+                    modeButton(
+                        title: "Draw As Them",
+                        subtitle: "Draw with color-vision limits"
+                    ) {
+                        ColorblindDrawView()
+                    }
+                }
+                .padding(.horizontal, 32)
+
+                Spacer()
+                Spacer()
             }
-            .padding(.horizontal, 20)
-            .navigationTitle("Experience")
-            .navigationBarTitleDisplayMode(.inline)
         }
     }
 
     @ViewBuilder
-    private func modeCard<Destination: View>(
+    private func modeButton<Destination: View>(
         title: String,
         subtitle: String,
-        systemImage: String,
         destination: @escaping () -> Destination
     ) -> some View {
         NavigationLink(destination: destination()) {
-            HStack(spacing: 16) {
-                Image(systemName: systemImage)
-                    .font(.system(size: 28, weight: .semibold))
-                    .frame(width: 44, height: 44)
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(title)
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(.primary)
-                    Text(subtitle)
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary)
-                        .lineLimit(1)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
+            VStack(spacing: 6) {
+                Text(title)
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundColor(.black)
+                Text(subtitle)
+                    .font(.system(size: 12, weight: .regular))
+                    .foregroundColor(.black.opacity(0.8))
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
             }
-            .padding(16)
-            .background(
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(Color(.systemBackground))
-                    .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(Color(.systemGray5), lineWidth: 1)
-            )
+            .frame(maxWidth: .infinity, minHeight: 56)
+            .padding(.vertical, 6)
+            .background(Color(.systemGray4))
+            .clipShape(RoundedRectangle(cornerRadius: 6))
         }
         .buttonStyle(.plain)
     }
