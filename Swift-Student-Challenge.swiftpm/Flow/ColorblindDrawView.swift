@@ -74,7 +74,7 @@ struct ColorblindDrawView: View {
                     }
 
                     DrawingView(canvasView: $canvasView)
-                        .opacity(isDrawing ? 1.0 : 0.02)
+                        .opacity(drawingOpacity)
                         .ignoresSafeArea(edges: .bottom)
 
                     missionCard
@@ -281,6 +281,12 @@ struct ColorblindDrawView: View {
             return normalImage
         }
         return simulatedImage
+    }
+
+    private var drawingOpacity: Double {
+        if isDrawing { return 1.0 }
+        if activeTool == .eraser || activeTool == .lasso { return 1.0 }
+        return 0.02
     }
 
     private func setTool(_ tool: ToolType) {
