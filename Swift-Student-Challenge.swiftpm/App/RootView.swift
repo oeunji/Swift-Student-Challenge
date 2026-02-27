@@ -12,12 +12,13 @@ struct RootView: View {
     @State private var didFinishOnboarding = false
 
     var body: some View {
-        if didFinishOnboarding {
-            ExperienceModeSelectView()
-        } else if didFinishFirst {
-            OnboardingSecondView(didFinish: $didFinishOnboarding)
-        } else {
-            OnboardingFirstView(didFinish: $didFinishFirst)
-        }
+        ExperienceModeSelectView()
+//        if didFinishOnboarding {
+//            ExperienceModeSelectView()
+//        } else if didFinishFirst {
+//            OnboardingSecondView(didFinish: $didFinishOnboarding)
+//        } else {
+//            OnboardingFirstView(didFinish: $didFinishFirst)
+//        }
     }
 }

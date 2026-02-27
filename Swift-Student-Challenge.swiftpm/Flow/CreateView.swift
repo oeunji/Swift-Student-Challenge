@@ -124,26 +124,10 @@ struct CreateView: View {
                             )
                             .tint(.black)
                             .frame(width: 110)
+                            .opacity(isInkingTool(activeTool) ? 1 : 0.2)
+                            .allowsHitTesting(isInkingTool(activeTool))
                             .onChange(of: widthBinding.wrappedValue) { _ in
                                 setTool(activeTool)
-                            }
-                        }
-
-                        if activeTool == .eraser {
-                            Divider().frame(height: 20)
-                            Button {
-                                eraserMode = .vector
-                                setTool(.eraser)
-                            } label: {
-                                Image(systemName: "eraser.line.dashed")
-                                    .foregroundColor(eraserMode == .vector ? .blue : .primary)
-                            }
-                            Button {
-                                eraserMode = .bitmap
-                                setTool(.eraser)
-                            } label: {
-                                Image(systemName: "eraser")
-                                    .foregroundColor(eraserMode == .bitmap ? .blue : .primary)
                             }
                         }
                 }

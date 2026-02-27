@@ -150,6 +150,14 @@ struct ColorblindDrawView: View {
         }
     }
 
+    private var sliderBinding: Binding<Double> {
+        widthBinding(for: activeTool) ?? $penWidth
+    }
+
+    private var sliderRange: ClosedRange<Double> {
+        widthRange(for: activeTool) ?? 2...12
+    }
+
     private var toolBarRow: some View {
         HStack(spacing: 15) {
             Button(action: { canvasView.undoManager?.undo() }) {
@@ -224,38 +232,20 @@ struct ColorblindDrawView: View {
                 .buttonStyle(.plain)
             }
 
-            if let widthBinding = widthBinding(for: activeTool),
-               let widthRange = widthRange(for: activeTool) {
-                Divider().frame(height: 20)
-                Slider(
-                    value: widthBinding,
-                    in: widthRange,
-                    step: 1
-                )
-                .tint(.black)
-                .frame(width: 110)
-                .onChange(of: widthBinding.wrappedValue) { _ in
-                    setTool(activeTool)
-                }
+            Divider().frame(height: 20)
+            Slider(
+                value: sliderBinding,
+                in: sliderRange,
+                step: 1
+            )
+            .tint(.black)
+            .frame(width: 110)
+            .opacity(isInkingTool(activeTool) ? 1 : 0.2)
+            .allowsHitTesting(isInkingTool(activeTool))
+            .onChange(of: sliderBinding.wrappedValue) { _ in
+                setTool(activeTool)
             }
 
-            if activeTool == .eraser {
-                Divider().frame(height: 20)
-                Button {
-                    eraserMode = .vector
-                    setTool(.eraser)
-                } label: {
-                    Image(systemName: "eraser.line.dashed")
-                        .foregroundColor(eraserMode == .vector ? .blue : .primary)
-                }
-                Button {
-                    eraserMode = .bitmap
-                    setTool(.eraser)
-                } label: {
-                    Image(systemName: "eraser")
-                        .foregroundColor(eraserMode == .bitmap ? .blue : .primary)
-                }
-            }
         }
         .padding(8)
         .background(Color(.systemGray6))
