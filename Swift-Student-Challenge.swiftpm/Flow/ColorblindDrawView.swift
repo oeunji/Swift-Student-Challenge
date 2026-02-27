@@ -7,13 +7,12 @@
 
 import SwiftUI
 import PencilKit
-import CoreImage
 import UIKit
 
 struct ColorblindDrawView: View {
 
     @State private var canvasView = PKCanvasView()
-    @State private var selectedMode: VisionMode = .protanopia
+    let selectedMode: VisionMode
     @State private var normalImage: UIImage?
     @State private var simulatedImage: UIImage?
     @State private var renderSize: CGSize = .zero
@@ -27,7 +26,7 @@ struct ColorblindDrawView: View {
     @State private var penWidth: Double = 5
     @State private var brushWidth: Double = 7
     @State private var eraserMode: PKEraserTool.EraserType = .vector
-    @State private var missionText: String = Self.missions.randomElement() ?? "Draw a ripe red apple."
+    @State private var missionText: String
     @State private var renderTimer: Timer?
 
     private let simulationService = VisionSimulationService()
@@ -42,11 +41,17 @@ struct ColorblindDrawView: View {
     }
 
     private let palette: [Color] = [.black, .red, .yellow, .green, .blue, .purple]
-    private static let missions: [String] = [
-        "Draw a ripe red apple.",
-        "Draw a traffic light with red, yellow, and green.",
-        "Draw a rainbow."
+    private static let missionByMode: [VisionMode: String] = [
+        .protanopia: "Draw two objects using red and green. Can you tell them apart?",
+        .deuteranopia: "Separate red and green clearly.",
+        .tritanopia: "Draw using blue and yellow. Notice the difference.",
+        .achromatopsia: "Design using contrast only. No color cues."
     ]
+
+    init(selectedMode: VisionMode) {
+        self.selectedMode = selectedMode
+        _missionText = State(initialValue: Self.missionByMode[selectedMode] ?? "")
+    }
 
     var body: some View {
         content
@@ -76,18 +81,20 @@ struct ColorblindDrawView: View {
 
     private var content: some View {
         VStack(spacing: 12) {
-            Picker("Vision Mode", selection: $selectedMode) {
-                ForEach(VisionMode.allCases.filter { $0 != .normal }, id: \.self) { mode in
-                    Text(mode.rawValue).tag(mode)
-                }
+            HStack(spacing: 8) {
+                Text("Mode:")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.secondary)
+                Text(selectedMode.rawValue)
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundColor(.primary)
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(.systemGray6))
+                    .clipShape(Capsule())
             }
-            .pickerStyle(.segmented)
             .padding(.horizontal)
             .padding(.top, 8)
-            .onChange(of: selectedMode) { _ in
-                setTool(activeTool)
-                renderAndSimulate()
-            }
 
             toolBarRow
                 .padding(.horizontal)

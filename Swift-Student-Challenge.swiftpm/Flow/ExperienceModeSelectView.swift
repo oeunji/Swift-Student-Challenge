@@ -42,7 +42,7 @@ struct ExperienceModeSelectView: View {
                         title: "Draw As Them",
                         subtitle: "Draw with color-vision limits"
                     ) {
-                        ColorblindDrawView()
+                        VisionModeSelectView()
                     }
                 }
                 .padding(.horizontal, 32)
