@@ -66,10 +66,16 @@ struct ExperienceModeSelectView: View {
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
             }
-            .frame(maxWidth: .infinity, minHeight: 56)
+            .frame(width: 400)
+            .frame(minHeight: 56)
             .padding(.vertical, 6)
-            .background(Color(.systemGray4))
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .background(.ultraThinMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 24, style: .continuous)
+                    .stroke(.white.opacity(0.6), lineWidth: 1)
+            )
+            .shadow(color: .white.opacity(0.25), radius: 6, x: 0, y: 2)
         }
         .buttonStyle(.plain)
     }
