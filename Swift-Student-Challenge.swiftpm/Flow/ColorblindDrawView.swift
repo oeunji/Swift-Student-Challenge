@@ -102,6 +102,7 @@ struct ColorblindDrawView: View {
             } label: {
                 Text("Reveal Reality")
                     .font(.system(size: 16, weight: .semibold, design: .rounded))
+                    .foregroundColor(.black)
                     .frame(maxWidth: .infinity, minHeight: 44)
             }
             .buttonStyle(.bordered)
@@ -209,6 +210,7 @@ struct ColorblindDrawView: View {
                             in: widthRange,
                             step: 1
                         )
+                        .tint(.black)
                         .frame(width: 110)
                         .onChange(of: widthBinding.wrappedValue) { _ in
                             setTool(activeTool)
