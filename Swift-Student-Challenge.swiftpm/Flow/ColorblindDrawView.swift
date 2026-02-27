@@ -57,7 +57,7 @@ struct ColorblindDrawView: View {
 
     var body: some View {
         content
-        .navigationTitle("Draw As Them")
+        .navigationTitle("Mode: \(selectedMode.rawValue)")
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             setupCanvas()
@@ -83,21 +83,6 @@ struct ColorblindDrawView: View {
 
     private var content: some View {
         VStack(spacing: 12) {
-            HStack(spacing: 8) {
-                Text("Mode:")
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.secondary)
-                Text(selectedMode.rawValue)
-                    .font(.system(size: 12, weight: .semibold))
-                    .foregroundColor(.primary)
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color(.systemGray6))
-                    .clipShape(Capsule())
-            }
-            .padding(.horizontal)
-            .padding(.top, 8)
-
             toolBarRow
                 .padding(.horizontal)
 

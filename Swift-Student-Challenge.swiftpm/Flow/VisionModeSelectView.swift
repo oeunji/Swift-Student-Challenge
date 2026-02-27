@@ -2,45 +2,74 @@ import SwiftUI
 
 struct VisionModeSelectView: View {
     var body: some View {
-        VStack(spacing: 18) {
-            Spacer()
-            
-            Text("Choose a Vision Mode")
-                .font(.system(size: 26, weight: .semibold, design: .rounded))
-                .padding(.top, 12)
-            
-            Spacer()
+        ZStack {
+            gridBackground
+            VStack(spacing: 18) {
+                Spacer()
+                
+                Text("Choose a Vision Mode")
+                    .font(.system(size: 32, weight: .semibold, design: .rounded))
+                    .padding(.top, 12)
+                
+                Spacer()
 
-            VStack(spacing: 14) {
-                HStack(spacing: 14) {
-                    modeCard(
-                        title: "Protanopia",
-                        subtitle: "Reduced sensitivity to red.",
-                        mode: .protanopia
-                    )
-                    modeCard(
-                        title: "Deuteranopia",
-                        subtitle: "Reduced sensitivity to green.",
-                        mode: .deuteranopia
-                    )
+                VStack(spacing: 14) {
+                    HStack(spacing: 14) {
+                        modeCard(
+                            title: "Protanopia",
+                            subtitle: "Reduced sensitivity to red.",
+                            mode: .protanopia
+                        )
+                        modeCard(
+                            title: "Deuteranopia",
+                            subtitle: "Reduced sensitivity to green.",
+                            mode: .deuteranopia
+                        )
+                    }
+                    HStack(spacing: 14) {
+                        modeCard(
+                            title: "Tritanopia",
+                            subtitle: "Reduced sensitivity to blue.",
+                            mode: .tritanopia
+                        )
+                        modeCard(
+                            title: "Achromatopsia",
+                            subtitle: "No color perception.",
+                            mode: .achromatopsia
+                        )
+                    }
                 }
-                HStack(spacing: 14) {
-                    modeCard(
-                        title: "Tritanopia",
-                        subtitle: "Reduced sensitivity to blue.",
-                        mode: .tritanopia
-                    )
-                    modeCard(
-                        title: "Achromatopsia",
-                        subtitle: "No color perception.",
-                        mode: .achromatopsia
-                    )
-                }
+                .padding(.horizontal, 20)
+
+                Spacer()
             }
-            .padding(.horizontal, 20)
-
-            Spacer()
         }
+    }
+
+    private var gridBackground: some View {
+        Color.white
+            .ignoresSafeArea()
+            .overlay(
+                GeometryReader { proxy in
+                    let spacing: CGFloat = 30
+                    let size = proxy.size
+                    Path { path in
+                        var x: CGFloat = 0
+                        while x <= size.width {
+                            path.move(to: CGPoint(x: x, y: 0))
+                            path.addLine(to: CGPoint(x: x, y: size.height))
+                            x += spacing
+                        }
+                        var y: CGFloat = 0
+                        while y <= size.height {
+                            path.move(to: CGPoint(x: 0, y: y))
+                            path.addLine(to: CGPoint(x: size.width, y: y))
+                            y += spacing
+                        }
+                    }
+                    .stroke(Color.gray.opacity(0.18), lineWidth: 1)
+                }
+            )
     }
 
     private func modeCard(title: String, subtitle: String, mode: VisionMode) -> some View {
