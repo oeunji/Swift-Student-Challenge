@@ -45,7 +45,7 @@ struct VisionModeSelectView: View {
 
     private func modeCard(title: String, subtitle: String, mode: VisionMode) -> some View {
         NavigationLink(destination: ColorblindDrawView(selectedMode: mode)) {
-            VStack(alignment: .center, spacing: 6) {
+            VStack(alignment: .center, spacing: 10) {
                 Text(title)
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundColor(Color(red: 0.1647, green: 0.0275, blue: 0.0275))

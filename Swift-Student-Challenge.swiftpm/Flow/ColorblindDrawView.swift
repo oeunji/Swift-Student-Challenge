@@ -41,16 +41,18 @@ struct ColorblindDrawView: View {
     }
 
     private let palette: [Color] = [.black, .red, .yellow, .green, .blue, .purple]
-    private static let missionByMode: [VisionMode: String] = [
-        .protanopia: "Draw two objects using red and green. Can you tell them apart?",
-        .deuteranopia: "Separate red and green clearly.",
-        .tritanopia: "Draw using blue and yellow. Notice the difference.",
-        .achromatopsia: "Design using contrast only. No color cues."
+    private static let missions: [String] = [
+        "Draw a ripe apple.",
+        "Design a traffic light.",
+        "Draw a rainbow.",
+        "Create a red and green warning sign.",
+        "Draw a watermelon.",
+        "Design a health bar (red to green)."
     ]
 
     init(selectedMode: VisionMode) {
         self.selectedMode = selectedMode
-        _missionText = State(initialValue: Self.missionByMode[selectedMode] ?? "")
+        _missionText = State(initialValue: Self.missions.randomElement() ?? "")
     }
 
     var body: some View {
