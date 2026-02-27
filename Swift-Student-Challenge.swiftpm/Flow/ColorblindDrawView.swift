@@ -27,9 +27,6 @@ struct ColorblindDrawView: View {
     @State private var isRevealActive = false
     @State private var revealSelection: RevealSelection = .simulated
 
-    @State private var navigateToFix = false
-    @State private var snapshotImage: UIImage?
-
     @State private var showClearAlert = false
 
     private let simulationService = VisionSimulationService()
@@ -119,32 +116,6 @@ struct ColorblindDrawView: View {
             .buttonStyle(.bordered)
             .padding(.horizontal)
 
-            Button {
-                createSnapshotAndNavigate()
-            } label: {
-                Text("Next: Fix Accessibility")
-                    .font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .frame(maxWidth: .infinity, minHeight: 50)
-            }
-            .buttonStyle(.borderedProminent)
-            .padding(.horizontal)
-            .padding(.bottom, 16)
-
-            NavigationLink(
-                destination: Group {
-                    if let snapshotImage {
-                        AccessibilityFixView(
-                            originalImage: snapshotImage,
-                            visionMode: selectedMode
-                        )
-                    } else {
-                        EmptyView()
-                    }
-                },
-                isActive: $navigateToFix
-            ) {
-                EmptyView()
-            }
         }
         .navigationTitle("Draw As Them")
         .navigationBarTitleDisplayMode(.inline)
@@ -359,13 +330,6 @@ struct ColorblindDrawView: View {
         simulatedImage = simulationService.simulate(image: original, mode: selectedMode)
     }
 
-    private func createSnapshotAndNavigate() {
-        if normalImage == nil {
-            renderAndSimulate()
-        }
-        snapshotImage = normalImage
-        navigateToFix = snapshotImage != nil
-    }
 }
 
 final class RenderThrottler {
