@@ -26,6 +26,7 @@ struct ColorblindDrawView: View {
     @State private var penWidth: Double = 5
     @State private var brushWidth: Double = 7
     @State private var eraserMode: PKEraserTool.EraserType = .vector
+    @State private var missionText: String = Self.missions.randomElement() ?? "Draw a ripe red apple."
 
     private let simulationService = VisionSimulationService()
     private let throttler = RenderThrottler(minInterval: 1.0 / 12.0)
@@ -41,6 +42,11 @@ struct ColorblindDrawView: View {
     }
 
     private let palette: [Color] = [.black, .red, .yellow, .green, .blue, .purple]
+    private static let missions: [String] = [
+        "Draw a ripe red apple.",
+        "Draw a traffic light with red, yellow, and green.",
+        "Draw a rainbow."
+    ]
 
     var body: some View {
         VStack(spacing: 12) {
@@ -57,7 +63,7 @@ struct ColorblindDrawView: View {
             }
 
             GeometryReader { geo in
-                ZStack(alignment: .top) {
+                ZStack(alignment: .topLeading) {
                     if let imageToShow = displayedImage {
                         Image(uiImage: imageToShow)
                             .resizable()
@@ -70,6 +76,10 @@ struct ColorblindDrawView: View {
                     DrawingView(canvasView: $canvasView)
                         .opacity(isDrawing ? 1.0 : 0.02)
                         .ignoresSafeArea(edges: .bottom)
+
+                    missionCard
+                        .padding(14)
+                        .allowsHitTesting(false)
 
                     if isRevealActive {
                         revealPicker
@@ -235,6 +245,22 @@ struct ColorblindDrawView: View {
         case .pencil, .pen, .brush: return true
         case .eraser, .lasso: return false
         }
+    }
+
+    private var missionCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("Mission")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+
+            Text(missionText)
+                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .foregroundStyle(.primary)
+        }
+        .padding(12)
+        .background(.ultraThinMaterial)
+        .cornerRadius(12)
+        .shadow(color: .black.opacity(0.08), radius: 6, x: 0, y: 4)
     }
 
     private var revealPicker: some View {
