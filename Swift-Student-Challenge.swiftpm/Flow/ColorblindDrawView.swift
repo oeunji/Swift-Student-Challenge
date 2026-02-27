@@ -27,7 +27,6 @@ struct ColorblindDrawView: View {
     @State private var brushWidth: Double = 7
     @State private var eraserMode: PKEraserTool.EraserType = .vector
     @State private var missionText: String
-    @State private var renderTimer: Timer?
 
     private let simulationService = VisionSimulationService()
 
@@ -61,10 +60,6 @@ struct ColorblindDrawView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             setupCanvas()
-            startRenderTimer()
-        }
-        .onDisappear {
-            stopRenderTimer()
         }
         .alert("Reveal Reality?", isPresented: $showRevealAlert) {
             Button("Cancel", role: .cancel) {}
@@ -97,7 +92,9 @@ struct ColorblindDrawView: View {
                             .allowsHitTesting(false)
                     }
 
-                    DrawingView(canvasView: $canvasView)
+                    DrawingView(canvasView: $canvasView) {
+                        renderAndSimulate()
+                    }
                         .opacity(drawingOpacity)
                         .ignoresSafeArea(edges: .bottom)
 
@@ -348,18 +345,6 @@ struct ColorblindDrawView: View {
         let original = simulationService.render(drawing: canvasView.drawing, size: size)
         normalImage = original
         simulatedImage = simulationService.simulate(image: original, mode: selectedMode)
-    }
-
-    private func startRenderTimer() {
-        if renderTimer != nil { return }
-        renderTimer = Timer.scheduledTimer(withTimeInterval: 1.0 / 30.0, repeats: true) { _ in
-            renderAndSimulate()
-        }
-    }
-
-    private func stopRenderTimer() {
-        renderTimer?.invalidate()
-        renderTimer = nil
     }
 
     private func simulatedColor(_ color: Color, mode: VisionMode) -> Color {
