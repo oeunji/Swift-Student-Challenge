@@ -297,7 +297,6 @@ struct ColorblindDrawView: View {
 
     private var drawingOpacity: Double {
         if isDrawing { return 1.0 }
-        if activeTool == .eraser || activeTool == .lasso { return 1.0 }
         return 0.02
     }
 
