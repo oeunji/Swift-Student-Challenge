@@ -41,8 +41,11 @@ struct CreateView: View {
                 } label: {
                     Text("Next")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundColor(.black)
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.bordered)
+                .tint(.clear)
+                .padding(.horizontal, 12)
             }
             ToolbarItemGroup(placement: .principal) {
                 HStack(spacing: 15) {
@@ -119,6 +122,7 @@ struct CreateView: View {
                                 in: widthRange,
                                 step: 1
                             )
+                            .tint(.black)
                             .frame(width: 110)
                             .onChange(of: widthBinding.wrappedValue) { _ in
                                 setTool(activeTool)

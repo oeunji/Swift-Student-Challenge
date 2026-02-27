@@ -87,6 +87,7 @@ struct VisionSimView: View {
             }
         }
         .padding()
+        .foregroundColor(.black)
     }
     
     private func renderOriginal(rect: CGRect) -> UIImage {
