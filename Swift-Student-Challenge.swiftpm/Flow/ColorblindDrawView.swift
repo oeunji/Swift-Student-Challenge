@@ -39,7 +39,7 @@ struct ColorblindDrawView: View {
         case normal = "Normal"
     }
 
-    private let palette: [Color] = [.black, .red, .yellow, .green, .blue, .purple]
+    @State private var palette: [Color] = [.black, .red, .yellow, .green, .blue, .purple]
     private static let missions: [String] = [
         "Draw a ripe apple.",
         "Design a traffic light.",
@@ -60,6 +60,12 @@ struct ColorblindDrawView: View {
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             setupCanvas()
+            if palette.count > 1 {
+                let first = palette[0]
+                var rest = Array(palette.dropFirst())
+                rest.shuffle()
+                palette = [first] + rest
+            }
         }
         .alert("Reveal Reality?", isPresented: $showRevealAlert) {
             Button("Cancel", role: .cancel) {}
@@ -332,6 +338,9 @@ struct ColorblindDrawView: View {
     private func setupCanvas() {
         canvasView.drawingPolicy = .anyInput
         canvasView.backgroundColor = .white
+        if let first = palette.first {
+            activeColor = first
+        }
         setTool(activeTool)
     }
 
