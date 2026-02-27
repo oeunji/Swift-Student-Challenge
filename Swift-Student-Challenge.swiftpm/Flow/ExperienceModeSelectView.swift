@@ -19,13 +19,15 @@ struct ExperienceModeSelectView: View {
 
                 Text("The color you see isn’t the color everyone sees.")
                     .font(.system(size: 24, weight: .semibold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color(red: 0.1647, green: 0.0275, blue: 0.0275))
 
                 Spacer()
+                    .frame(height: 46)
 
                 Text("Choose Your Experience")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(.black.opacity(0.8))
+                    .foregroundColor(Color(red: 0.4275, green: 0.2706, blue: 0.2706))
+                    .padding(.vertical, 10)
 
                 HStack(spacing: 16) {
                     modeButton(
@@ -43,6 +45,7 @@ struct ExperienceModeSelectView: View {
                     }
                 }
                 .padding(.horizontal, 32)
+                .padding(.vertical, 10)
 
                 Spacer()
             }
@@ -59,21 +62,34 @@ struct ExperienceModeSelectView: View {
             VStack(spacing: 6) {
                 Text(title)
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.black)
+                    .foregroundColor(Color(red: 0.1647, green: 0.0275, blue: 0.0275))
                 Text(subtitle)
                     .font(.system(size: 12, weight: .regular))
-                    .foregroundColor(.black.opacity(0.8))
+                    .foregroundColor(Color(red: 0.4275, green: 0.2706, blue: 0.2706))
                     .multilineTextAlignment(.center)
                     .lineLimit(2)
             }
             .frame(width: 400)
-            .frame(minHeight: 56)
+            .frame(minHeight: 64)
             .padding(.vertical, 6)
-            .background(.ultraThinMaterial)
+            .background(.white)
             .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
             .overlay(
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
-                    .stroke(.white.opacity(0.6), lineWidth: 1)
+                    .stroke(
+                        LinearGradient(
+                            colors: [
+                                Color(red: 1.0, green: 0.1843, blue: 0.1843),
+                                Color(red: 0.7176, green: 0.7451, blue: 0.1569),
+                                Color(red: 0.8392, green: 0.8588, blue: 0.1843),
+                                Color(red: 0.7176, green: 0.7451, blue: 0.1569),
+                                Color(red: 1.0, green: 0.2275, blue: 0.1961)
+                            ],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing
+                        ),
+                        lineWidth: 1.5
+                    )
             )
             .shadow(color: .white.opacity(0.25), radius: 6, x: 0, y: 2)
         }
