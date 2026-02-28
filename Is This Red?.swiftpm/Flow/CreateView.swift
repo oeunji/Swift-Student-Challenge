@@ -23,21 +23,30 @@ struct CreateView: View {
                 .ignoresSafeArea(edges: .bottom)
         }
         .safeAreaInset(edge: .bottom) {
-            NavigationLink {
-                VisionSimView(canvasView: $canvasView, onFinish: { dismiss() })
-            } label: {
-                Text("See Through Their Eyes")
-                    .font(.system(size: 18, weight: .semibold, design: .rounded))
-                    .frame(maxWidth: .infinity, minHeight: 52)
-            }
-            .buttonStyle(.borderedProminent)
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .background(.thinMaterial)
+            Text("Feel free to draw, and tap the Next button when you’re done.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 12)
+                .background(.thinMaterial)
         }
         .navigationTitle("Bio_DNA")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                NavigationLink {
+                    VisionSimView(canvasView: $canvasView, onFinish: { dismiss() })
+                } label: {
+                    Text("Next")
+                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .foregroundColor(.black)
+                }
+                .buttonStyle(.bordered)
+                .tint(.clear)
+                .padding(.horizontal, 12)
+            }
             ToolbarItemGroup(placement: .principal) {
                 HStack(spacing: 15) {
                         Button(action: { canvasView.undoManager?.undo() }) { Image(systemName: "arrow.uturn.backward") }
@@ -113,27 +122,12 @@ struct CreateView: View {
                                 in: widthRange,
                                 step: 1
                             )
+                            .tint(.black)
                             .frame(width: 110)
+                            .opacity(isInkingTool(activeTool) ? 1 : 0.2)
+                            .allowsHitTesting(isInkingTool(activeTool))
                             .onChange(of: widthBinding.wrappedValue) { _ in
                                 setTool(activeTool)
-                            }
-                        }
-
-                        if activeTool == .eraser {
-                            Divider().frame(height: 20)
-                            Button {
-                                eraserMode = .vector
-                                setTool(.eraser)
-                            } label: {
-                                Image(systemName: "eraser.line.dashed")
-                                    .foregroundColor(eraserMode == .vector ? .blue : .primary)
-                            }
-                            Button {
-                                eraserMode = .bitmap
-                                setTool(.eraser)
-                            } label: {
-                                Image(systemName: "eraser")
-                                    .foregroundColor(eraserMode == .bitmap ? .blue : .primary)
                             }
                         }
                 }

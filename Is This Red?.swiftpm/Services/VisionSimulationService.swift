@@ -12,7 +12,7 @@ import CoreImage.CIFilterBuiltins
 
 enum VisionMode: String, CaseIterable {
     case normal = "Normal"  // 일반
-    case protanopia = "Protanopia"  // 적생맹
+    case protanopia = "Protanopia"  // 적색맹
     case deuteranopia = "Deuteranopia"  // 녹색맹
     case tritanopia = "Tritanopia"  // 청색맹
     case achromatopsia = "Achromatopsia"    // 전색맹
