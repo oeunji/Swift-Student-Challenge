@@ -23,7 +23,6 @@ struct VisionSimView: View {
     var body: some View {
         VStack {
             
-            // 모드 선택
             Picker("Mode", selection: $selectedMode) {
                 ForEach(VisionMode.allCases.filter { $0 != .normal }, id: \.self) { mode in
                     Text(mode.rawValue).tag(mode)

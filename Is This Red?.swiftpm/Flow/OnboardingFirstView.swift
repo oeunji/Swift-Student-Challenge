@@ -87,7 +87,6 @@ struct OnboardingFirstView: View {
             bgIndex = nextIndex
         }
 
-        // 모든 배경을 순환했으면 다음 화면으로
         if nextIndex == 0 {
             withAnimation(.easeInOut(duration: 0.35)) {
                 didFinish = true
